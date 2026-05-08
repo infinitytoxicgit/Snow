@@ -1,9 +1,12 @@
-from pyrogram import filters
+import asyncio
 import os
+import random
 import re
 import requests
 import yt_dlp
 
+from pyrogram import filters
+from pyrogram.errors import FloodWait
 from pyrogram.types import (
     Message,
     InlineKeyboardButton,
@@ -17,15 +20,47 @@ from Oneforall import app
 URL_PATTERN = r"(https?://[^\s]+)"
 
 
-# INSTAGRAM APIs
-INSTAGRAM_APIS = [
+# USER AGENTS
+USER_AGENTS = [
 
-    "https://api.agatz.xyz/api/instagram?url={url}",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0 Safari/537.36",
+
+    "Mozilla/5.0 (Linux; Android 14) Chrome/123.0 Mobile Safari/537.36",
+
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Safari/604.1",
+
+    "Mozilla/5.0 (X11; Linux x86_64) Firefox/126.0"
+]
+
+
+# MULTIPLE INSTAGRAM APIs
+INSTAGRAM_APIS = [
 
     "https://api.neoxr.eu/api/ig?url={url}&apikey=mcandy",
 
-    "https://api.ryzendesu.vip/api/downloader/instagram?url={url}"
+    "https://api.agatz.xyz/api/instagram?url={url}",
+
+    "https://api.ryzendesu.vip/api/downloader/instagram?url={url}",
+
+    "https://api.betabotz.eu.org/api/download/igdowloader?url={url}&apikey=BetaBotz"
 ]
+
+
+# SAFE EDIT
+async def safe_edit(message, text):
+
+    try:
+
+        await message.edit_text(text)
+
+    except FloodWait as e:
+
+        await asyncio.sleep(e.value)
+
+        await message.edit_text(text)
+
+    except:
+        pass
 
 
 # DOWNLOAD FUNCTION
@@ -39,7 +74,7 @@ def download_video(url: str):
 
         url = url.split("?")[0]
 
-        # INSTAGRAM
+        # INSTAGRAM APIs
         if "instagram.com" in url:
 
             for api in INSTAGRAM_APIS:
@@ -50,62 +85,55 @@ def download_video(url: str):
                         url=url
                     )
 
+                    headers = {
+
+                        "User-Agent":
+                            random.choice(
+                                USER_AGENTS
+                            )
+                    }
+
                     response = requests.get(
                         api_url,
+                        headers=headers,
                         timeout=30
-                    ).json()
+                    )
+
+                    if response.status_code != 200:
+                        continue
+
+                    try:
+                        data = response.json()
+                    except:
+                        continue
 
                     video_url = None
 
-                    # AGATZ
-                    if response.get("data"):
+                    # DATA
+                    if data.get("data"):
 
-                        data = response["data"]
-
-                        if isinstance(data, list):
-
-                            if isinstance(
-                                data[0],
-                                dict
-                            ):
-                                video_url = (
-                                    data[0].get("url")
-                                )
-                            else:
-                                video_url = data[0]
-
-                        elif isinstance(data, dict):
-
-                            video_url = (
-                                data.get("url")
-                            )
-
-                    # RESULT
-                    if (
-                        not video_url
-                        and response.get("result")
-                    ):
-
-                        result = response[
-                            "result"
-                        ]
+                        result = data["data"]
 
                         if isinstance(
                             result,
                             list
                         ):
 
+                            first = result[0]
+
                             if isinstance(
-                                result[0],
+                                first,
                                 dict
                             ):
+
                                 video_url = (
-                                    result[0].get(
-                                        "url"
-                                    )
+                                    first.get("url")
+                                    or first.get("video")
                                 )
+
                             else:
-                                video_url = result[0]
+
+                                video_url = first
 
                         elif isinstance(
                             result,
@@ -114,16 +142,59 @@ def download_video(url: str):
 
                             video_url = (
                                 result.get("url")
+                                or result.get("video")
                             )
 
+                    # RESULT
+                    if (
+                        not video_url
+                        and data.get("result")
+                    ):
+
+                        result = data["result"]
+
+                        if isinstance(
+                            result,
+                            list
+                        ):
+
+                            first = result[0]
+
+                            if isinstance(
+                                first,
+                                dict
+                            ):
+
+                                video_url = (
+                                    first.get("url")
+                                    or first.get("video")
+                                )
+
+                            else:
+
+                                video_url = first
+
+                        elif isinstance(
+                            result,
+                            dict
+                        ):
+
+                            video_url = (
+                                result.get("url")
+                                or result.get("video")
+                            )
+
+                    # DOWNLOAD
                     if video_url:
 
                         file_path = (
-                            f"{path}/instagram.mp4"
+                            f"{path}/instagram_"
+                            f"{random.randint(1,9999)}.mp4"
                         )
 
                         video = requests.get(
                             video_url,
+                            headers=headers,
                             stream=True,
                             timeout=60
                         )
@@ -142,16 +213,20 @@ def download_video(url: str):
                                 if chunk:
                                     f.write(chunk)
 
-                        return file_path
+                        if os.path.exists(
+                            file_path
+                        ):
+
+                            return file_path
 
                 except Exception as e:
 
                     print(
-                        "INSTAGRAM API ERROR:",
+                        "API ERROR:",
                         e
                     )
 
-        # YOUTUBE
+        # YOUTUBE / FALLBACK
         ydl_opts = {
 
             "outtmpl":
@@ -168,10 +243,18 @@ def download_video(url: str):
             "noplaylist": True,
             "geo_bypass": True,
 
+            "sleep_interval_requests": 3,
+
+            "extractor_retries": 10,
+
+            "retries": 10,
+
             "http_headers": {
 
                 "User-Agent":
-                    "Mozilla/5.0"
+                    random.choice(
+                        USER_AGENTS
+                    )
             }
         }
 
@@ -213,14 +296,14 @@ def download_video(url: str):
         return None
 
 
-# MAIN DOWNLOADER
+# PROCESS
 async def process_download(
     message,
     url
 ):
 
     status = await message.reply_text(
-        "⚡ **Downloading...**"
+        "⚡ Downloading..."
     )
 
     try:
@@ -236,18 +319,20 @@ async def process_download(
             )
         ):
 
-            return await status.edit(
+            return await safe_edit(
+                status,
                 "❌ Download Failed"
             )
 
-        await status.edit(
+        await safe_edit(
+            status,
             "📤 Uploading..."
         )
 
         buttons = InlineKeyboardMarkup(
             [[
                 InlineKeyboardButton(
-                    "🔗 Original Link",
+                    "🔗 Open Link",
                     url=url
                 )
             ]]
@@ -266,16 +351,26 @@ async def process_download(
         except:
             pass
 
-        await status.delete()
+        try:
+            await status.delete()
+        except:
+            pass
+
+    except FloodWait as e:
+
+        await asyncio.sleep(
+            e.value
+        )
 
     except Exception as e:
 
-        await status.edit(
+        await safe_edit(
+            status,
             f"❌ Error:\n`{e}`"
         )
 
 
-# AUTO LINK DOWNLOADER
+# AUTO
 @app.on_message(
     filters.text &
     filters.regex(URL_PATTERN)
@@ -312,9 +407,9 @@ async def auto_downloader(
 @app.on_message(
     filters.command(
         [
-            "instagram",
             "ig",
-            "insta"
+            "insta",
+            "instagram"
         ]
     )
 )
@@ -326,8 +421,7 @@ async def instagram_command(
     if len(message.command) < 2:
 
         return await message.reply_text(
-            "**Usage:**\n"
-            "/ig instagram_link"
+            "Usage:\n/ig instagram_link"
         )
 
     url = message.command[1]
@@ -337,14 +431,5 @@ async def instagram_command(
         url
     )
 
-
-__HELP__ = """
-/ig link
-/insta link
-/instagram link
-
-Auto downloads:
-Instagram + YouTube links
-"""
 
 __MODULE__ = "Downloader"
