@@ -3,11 +3,13 @@ import speedtest
 
 from pyrogram import filters
 from pyrogram.types import Message
+from pyrogram.errors import FloodWait
 
 from Oneforall import app
 from Oneforall.misc import SUDOERS
 
 
+# SPEEDTEST FUNCTION
 def run_speedtest():
 
     test = speedtest.Speedtest()
@@ -15,18 +17,50 @@ def run_speedtest():
     test.get_best_server()
 
     test.download()
+
     test.upload()
 
-    test.results.share()
+    try:
+        test.results.share()
+    except:
+        pass
 
     return test.results.dict()
 
 
-@app.on_message(filters.command(["speedtest", "spt"]) & SUDOERS)
-async def speedtest_function(client, message: Message):
+# SAFE EDIT
+async def safe_edit(msg, text):
+
+    try:
+
+        await msg.edit_text(text)
+
+    except FloodWait as e:
+
+        await asyncio.sleep(e.value)
+
+        try:
+            await msg.edit_text(text)
+        except:
+            pass
+
+    except:
+        pass
+
+
+# COMMAND
+@app.on_message(
+    filters.command(
+        ["speedtest", "spt"]
+    ) & SUDOERS
+)
+async def speedtest_function(
+    client,
+    message: Message
+):
 
     m = await message.reply_text(
-        "⚡ **Running Speed Test...**"
+        "⚡ Running Speed Test..."
     )
 
     try:
@@ -38,6 +72,7 @@ async def speedtest_function(client, message: Message):
             run_speedtest
         )
 
+        # SPEEDS
         download = round(
             result["download"] / 1024 / 1024,
             2
@@ -48,42 +83,89 @@ async def speedtest_function(client, message: Message):
             2
         )
 
-        ping = result["ping"]
-
-        isp = result["client"]["isp"]
-
-        country = result["client"]["country"]
-
-        server = result["server"]["name"]
-
-        sponsor = result["server"]["sponsor"]
-
-        latency = result["server"]["latency"]
-
-        caption = f"""
-🏆 **SPEED TEST RESULT**
-
-📥 **Download:** `{download} Mbps`
-📤 **Upload:** `{upload} Mbps`
-📡 **Ping:** `{ping} ms`
-
-🌍 **ISP:** `{isp}`
-🇮🇳 **Country:** `{country}`
-
-🖥 **Server:** `{server}`
-🏢 **Sponsor:** `{sponsor}`
-⚡ **Latency:** `{latency}`
-"""
-
-        await message.reply_photo(
-            photo=result["share"],
-            caption=caption
+        ping = result.get(
+            "ping",
+            "N/A"
         )
 
-        await m.delete()
+        # CLIENT
+        client_data = result.get(
+            "client",
+            {}
+        )
+
+        isp = client_data.get(
+            "isp",
+            "Unknown"
+        )
+
+        country = client_data.get(
+            "country",
+            "Unknown"
+        )
+
+        # SERVER
+        server_data = result.get(
+            "server",
+            {}
+        )
+
+        server = server_data.get(
+            "name",
+            "Unknown"
+        )
+
+        sponsor = server_data.get(
+            "sponsor",
+            "Unknown"
+        )
+
+        latency = server_data.get(
+            "latency",
+            "Unknown"
+        )
+
+        caption = f"""
+╭───────────────⭓
+│ ⚡ SPEED TEST
+├───────────────
+│ 📥 Download: {download} Mbps
+│ 📤 Upload: {upload} Mbps
+│ 🏓 Ping: {ping} ms
+├───────────────
+│ 🌍 ISP: {isp}
+│ 🇮🇳 Country: {country}
+├───────────────
+│ 🖥 Server: {server}
+│ 🏢 Sponsor: {sponsor}
+│ ⚡ Latency: {latency}
+╰───────────────⭓
+"""
+
+        # SHARE IMAGE
+        share = result.get("share")
+
+        if share:
+
+            await message.reply_photo(
+                photo=share,
+                caption=caption
+            )
+
+        else:
+
+            await message.reply_text(
+                caption
+            )
+
+        try:
+            await m.delete()
+        except:
+            pass
 
     except Exception as e:
 
-        await m.edit_text(
+        await safe_edit(
+            m,
             f"❌ Error:\n`{e}`"
         )
