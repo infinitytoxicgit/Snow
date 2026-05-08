@@ -1,6 +1,6 @@
 import os
-
 import requests
+
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
@@ -8,85 +8,110 @@ from Oneforall import app
 
 
 def upload_file(file_path):
+
     url = "https://catbox.moe/user/api.php"
-    data = {"reqtype": "fileupload", "json": "true"}
-    files = {"fileToUpload": open(file_path, "rb")}
-    response = requests.post(url, data=data, files=files)
+
+    with open(file_path, "rb") as f:
+
+        files = {
+            "fileToUpload": f
+        }
+
+        data = {
+            "reqtype": "fileupload"
+        }
+
+        response = requests.post(
+            url,
+            data=data,
+            files=files
+        )
 
     if response.status_code == 200:
-        return True, response.text.strip()
-    else:
-        return False, f"ᴇʀʀᴏʀ: {response.status_code} - {response.text}"
+
+        text = response.text.strip()
+
+        if text.startswith("https://"):
+            return True, text
+
+        return False, text
+
+    return False, f"{response.status_code} - {response.text}"
 
 
-@app.on_message(filters.command(["tgm", "tgt", "telegraph", "tl"]))
-async def get_link_group(client, message):
+@app.on_message(
+    filters.command(
+        ["tgm", "tgt", "telegraph", "tl"]
+    )
+)
+async def telegraph_upload(client, message):
+
     if not message.reply_to_message:
+
         return await message.reply_text(
-            "Pʟᴇᴀsᴇ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇᴅɪᴀ ᴛᴏ ᴜᴘʟᴏᴀᴅ ᴏɴ Tᴇʟᴇɢʀᴀᴘʜ"
+            "❌ Reply to a media file."
         )
 
     media = message.reply_to_message
-    file_size = 0
-    if media.photo:
-        file_size = media.photo.file_size
-    elif media.video:
-        file_size = media.video.file_size
-    elif media.document:
-        file_size = media.document.file_size
 
-    if file_size > 200 * 1024 * 1024:
-        return await message.reply_text("Pʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴍᴇᴅɪᴀ ғɪʟᴇ ᴜɴᴅᴇʀ 200MB.")
+    if not (
+        media.photo
+        or media.video
+        or media.document
+        or media.audio
+    ):
+
+        return await message.reply_text(
+            "❌ Unsupported media."
+        )
+
+    text = await message.reply_text(
+        "📥 Downloading..."
+    )
 
     try:
-        text = await message.reply("Pʀᴏᴄᴇssɪɴɢ...")
 
-        async def progress(current, total):
-            try:
-                await text.edit_text(f"📥 Dᴏᴡɴʟᴏᴀᴅɪɴɢ... {current * 100 / total:.1f}%")
-            except Exception:
-                pass
+        file_path = await media.download()
+
+        await text.edit_text(
+            "📤 Uploading to Catbox..."
+        )
+
+        success, result = upload_file(file_path)
+
+        if success:
+
+            buttons = InlineKeyboardMarkup(
+                [[
+                    InlineKeyboardButton(
+                        "🌐 Open Link",
+                        url=result
+                    )
+                ]]
+            )
+
+            await text.edit_text(
+                f"✅ Uploaded Successfully\n\n{result}",
+                reply_markup=buttons,
+                disable_web_page_preview=True
+            )
+
+        else:
+
+            await text.edit_text(
+                f"❌ Upload Failed\n\n`{result}`"
+            )
 
         try:
-            local_path = await media.download(progress=progress)
-            await text.edit_text("📤 Uᴘʟᴏᴀᴅɪɴɢ ᴛᴏ ᴛᴇʟᴇɢʀᴀᴘʜ...")
+            os.remove(file_path)
+        except:
+            pass
 
-            success, upload_path = upload_file(local_path)
+    except Exception as e:
 
-            if success:
-                await text.edit_text(
-                    f"🌐 | [ᴜᴘʟᴏᴀᴅᴇᴅ ʟɪɴᴋ]({upload_path})",
-                    reply_markup=InlineKeyboardMarkup(
-                        [
-                            [
-                                InlineKeyboardButton(
-                                    "ᴜᴘʟᴏᴀᴅᴇᴅ ғɪʟᴇ",
-                                    url=upload_path,
-                                )
-                            ]
-                        ]
-                    ),
-                )
-            else:
-                await text.edit_text(
-                    f"ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ᴜᴘʟᴏᴀᴅɪɴɢ ʏᴏᴜʀ ғɪʟᴇ\n{upload_path}"
-                )
-
-            try:
-                os.remove(local_path)
-            except Exception:
-                pass
-
-        except Exception as e:
-            await text.edit_text(f"❌ Fɪʟᴇ ᴜᴘʟᴏᴀᴅ ғᴀɪʟᴇᴅ\n\n<i>Rᴇᴀsᴏɴ: {e}</i>")
-            try:
-                os.remove(local_path)
-            except Exception:
-                pass
-            return
-    except Exception:
-        pass
-
+        await text.edit_text(
+            f"❌ Error:\n`{e}`"
+        )
 
 __HELP__ = """
 **ᴛᴇʟᴇɢʀᴀᴘʜ ᴜᴘʟᴏᴀᴅ ʙᴏᴛ ᴄᴏᴍᴍᴀɴᴅs**
