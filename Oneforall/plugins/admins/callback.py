@@ -264,6 +264,9 @@ async def del_back_playlist(client, CallbackQuery, _):
             except:
                 image = None
             try:
+                if not file_path:
+                    raise Exception("YT download failed: media_path=None")
+
                 await Hotty.skip_stream(chat_id, file_path, video=status, image=image)
             except:
                 return await mystic.edit_text(_["call_6"])
