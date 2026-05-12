@@ -130,6 +130,7 @@ async def skip(cli, message: Message, _, chat_id):
         db[chat_id][0]["markup"] = "tg"
     elif "vid_" in queued:
         mystic = await message.reply_text(_["call_7"], disable_web_page_preview=True)
+        file_path = None
         try:
             file_path, direct = await YouTube.download(
                 videoid,
@@ -144,7 +145,16 @@ async def skip(cli, message: Message, _, chat_id):
         except:
             image = None
         try:
-            await Hotty.skip_stream(chat_id, file_path, video=status, image=image)
+            if not file_path:
+                raise Exception("YT download failed: media_path=None")
+
+            await Hotty.skip_stream(
+                chat_id,
+                file_path,
+                video=status,
+                image=image
+            )
+
         except:
             return await mystic.edit_text(_["call_6"])
         button = stream_markup(_, videoid, chat_id)
