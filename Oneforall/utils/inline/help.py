@@ -1,157 +1,187 @@
-from typing import Union
-
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardMarkup
 from pyrogram.enums import ButtonStyle
 from Oneforall import app
+from Oneforall.utils.inline.start import btn
 
 
-def help_pannel(_, START: Union[bool, int] = None):
-    first = [InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data=f"close")]
-    second = [
-        InlineKeyboardButton(
-            text=_["BACK_PAGE"],
-            callback_data=f"mbot_cb",
-            style=ButtonStyle.PRIMARY,
-        ),
-        InlineKeyboardButton(
-            text=_["BACK_BUTTON"],
-            callback_data=f"settingsback_helper",
-            style=ButtonStyle.PRIMARY,
-        ),
-        InlineKeyboardButton(
-            text=_["NEXT_PAGE"],
-            callback_data=f"mbot_cb",
-            style=ButtonStyle.PRIMARY,
-        ),
-    ]
-    mark = second if START else first
+def help_pannel(_, START=None):
+
     upl = InlineKeyboardMarkup(
         [
+
+            # ================= TOP SECTION =================
+
             [
-                InlineKeyboardButton(
-                    text=_["H_B_1"],
+                btn(
+                    "ᴘʟᴀʏ 🎵",
+                    5224565799888382217,
                     callback_data="help_callback hb1",
+                    style=ButtonStyle.PRIMARY
                 ),
-                InlineKeyboardButton(
-                    text=_["H_B_2"],
+
+                btn(
+                    "ᴘɪɴɢ ⚡",
+                    5224531289826157876,
                     callback_data="help_callback hb2",
+                    style=ButtonStyle.PRIMARY
                 ),
-                InlineKeyboardButton(
-                    text=_["H_B_3"],
+            ],
+
+            [
+                btn(
+                    "ᴀᴅᴍɪɴ 🛡",
+                    5224338222456283026,
                     callback_data="help_callback hb3",
+                    style=ButtonStyle.PRIMARY
                 ),
-            ],
-            [
-                InlineKeyboardButton(
-                    text=_["H_B_4"],
+
+                btn(
+                    "ɢʙᴀɴ 🚫",
+                    5224496122633941486,
                     callback_data="help_callback hb4",
+                    style=ButtonStyle.PRIMARY
                 ),
-                InlineKeyboardButton(
-                    text=_["H_B_5"],
+            ],
+
+            [
+                btn(
+                    "sᴏɴɢ 🎧",
+                    5224306392453640289,
                     callback_data="help_callback hb5",
+                    style=ButtonStyle.PRIMARY
                 ),
-                InlineKeyboardButton(
-                    text=_["H_B_6"],
+
+                btn(
+                    "ʟᴏᴏᴘ 🔁",
+                    5224343488086173151,
                     callback_data="help_callback hb6",
+                    style=ButtonStyle.PRIMARY
                 ),
             ],
+
             [
-                InlineKeyboardButton(
-                    text=_["H_B_7"],
+                btn(
+                    "ғᴜɴ ɢᴀᴍᴇs 🎮",
+                    5224659060808250648,
                     callback_data="help_callback hb7",
+                    style=ButtonStyle.PRIMARY
                 ),
-                InlineKeyboardButton(
-                    text=_["H_B_8"],
+            ],
+
+            # ================= GREEN SECTION =================
+
+            [
+                btn(
+                    "ʙʀᴏᴀᴅᴄᴀsᴛ 📢",
+                    5224524039921365315,
                     callback_data="help_callback hb8",
+                    style=ButtonStyle.SUCCESS
                 ),
-                InlineKeyboardButton(
-                    text=_["H_B_9"],
+
+                btn(
+                    "ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛠",
+                    5224537882600955399,
                     callback_data="help_callback hb9",
+                    style=ButtonStyle.SUCCESS
                 ),
             ],
+
             [
-                InlineKeyboardButton(
-                    text=_["H_B_10"],
+                btn(
+                    "sᴇᴇᴋ 🔍",
+                    5224681093990478312,
                     callback_data="help_callback hb10",
+                    style=ButtonStyle.SUCCESS
                 ),
-                InlineKeyboardButton(
-                    text=_["H_B_11"],
+
+                btn(
+                    "sʜᴜғғʟᴇ 🎼",
+                    5219696148788307720,
                     callback_data="help_callback hb11",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_12"],
-                    callback_data="help_callback hb12",
+                    style=ButtonStyle.SUCCESS
                 ),
             ],
+
             [
-                InlineKeyboardButton(
-                    text=_["H_B_13"],
-                    callback_data="help_callback hb13",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_14"],
-                    callback_data="help_callback hb14",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_15"],
-                    callback_data="help_callback hb15",
+                btn(
+                    "ᴘᴏᴡᴇʀᴇᴅ ʙʏ ʀᴏᴏʜɪ ✨",
+                    5222287908148371157,
+                    url="https://t.me/Go_And_Love_Yourself_Brother",
+                    style=ButtonStyle.SUCCESS
                 ),
             ],
+
+            # ================= NAVIGATION =================
+
+[
+    btn(
+        "ɴᴇxᴛ",
+        5462931610028510371,
+        callback_data="mbot_cb",
+        style=ButtonStyle.PRIMARY
+    ),
+
+    btn(
+        "ʜᴏᴍᴇ",
+        5796647601105276281,
+        callback_data="settingsback_helper",
+        style=ButtonStyle.SUCCESS
+    ),
+
+    btn(
+        "ɴᴇxᴛ",
+        5465144931230190889,
+        callback_data="mbot_cb",
+        style=ButtonStyle.PRIMARY
+    ),
+],
+
+            # ================= CLOSE =================
+
             [
-                InlineKeyboardButton(
-                    text=_["H_B_26"],
-                    callback_data="help_callback hb17",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_25"],
-                    callback_data="help_callback hb16",
-                ),
-                InlineKeyboardButton(
-                    "🎮 ғᴜɴ ɢᴀᴍᴇ",
-                    callback_data="help_callback hb21",
+                btn(
+                    "ᴄʟᴏsᴇ",
+                    5210952531676504517,
+                    callback_data="close",
+                    style=ButtonStyle.DANGER
                 ),
             ],
-            [
-                InlineKeyboardButton(
-                    text=_["H_B_27"],
-                    callback_data="help_callback hb18",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_28"],
-                    callback_data="help_callback hb19",
-                ),
-                InlineKeyboardButton(
-                    "✨ ғsᴜʙ",
-                    callback_data="help_callback hb20",
-                ),
-            ],
-            mark,
+
         ]
     )
+
     return upl
 
 
 def help_back_markup(_):
+
     upl = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(
-                    text=_["BACK_BUTTON"],
-                    callback_data=f"settings_back_helper",
+                btn(
+                    "ʙᴀᴄᴋ",
+                    5210952531676504517,
+                    callback_data="mbot_cb",
+                    style=ButtonStyle.DANGER,
                 ),
             ]
         ]
     )
+
     return upl
 
 
 def private_help_panel(_):
+
     buttons = [
         [
-            InlineKeyboardButton(
-                text=_["S_B_4"],
+            btn(
+                "ᴏᴘᴇɴ ʜᴇʟᴘ 📚",
+                5220035141967046212,
                 url=f"https://t.me/{app.username}?start=help",
+                style=ButtonStyle.PRIMARY,
             ),
         ],
     ]
+
     return buttons
