@@ -15,14 +15,14 @@ def help_pannel(_, START=None):
                 btn(
                     "ᴘʟᴀʏ 🎵",
                     5224565799888382217,
-                    callback_data="help_callback hb1",
+                    callback_data="help_callback hb11",
                     style=ButtonStyle.PRIMARY
                 ),
 
                 btn(
                     "ᴘɪɴɢ ⚡",
                     5224531289826157876,
-                    callback_data="help_callback hb2",
+                    callback_data="help_callback hb10",
                     style=ButtonStyle.PRIMARY
                 ),
             ],
@@ -31,14 +31,14 @@ def help_pannel(_, START=None):
                 btn(
                     "ᴀᴅᴍɪɴ 🛡",
                     5224338222456283026,
-                    callback_data="help_callback hb3",
+                    callback_data="help_callback hb1",
                     style=ButtonStyle.PRIMARY
                 ),
 
                 btn(
                     "ɢʙᴀɴ 🚫",
                     5224496122633941486,
-                    callback_data="help_callback hb4",
+                    callback_data="help_callback hb7",
                     style=ButtonStyle.PRIMARY
                 ),
             ],
@@ -47,14 +47,14 @@ def help_pannel(_, START=None):
                 btn(
                     "sᴏɴɢ 🎧",
                     5224306392453640289,
-                    callback_data="help_callback hb5",
+                    callback_data="help_callback hb14",
                     style=ButtonStyle.PRIMARY
                 ),
 
                 btn(
                     "ʟᴏᴏᴘ 🔁",
                     5224343488086173151,
-                    callback_data="help_callback hb6",
+                    callback_data="help_callback hb8",
                     style=ButtonStyle.PRIMARY
                 ),
             ],
@@ -63,7 +63,7 @@ def help_pannel(_, START=None):
                 btn(
                     "ғᴜɴ ɢᴀᴍᴇs 🎮",
                     5224659060808250648,
-                    callback_data="help_callback hb7",
+                    callback_data="help_callback hb21",
                     style=ButtonStyle.PRIMARY
                 ),
             ],
@@ -74,7 +74,7 @@ def help_pannel(_, START=None):
                 btn(
                     "ʙʀᴏᴀᴅᴄᴀsᴛ 📢",
                     5224524039921365315,
-                    callback_data="help_callback hb8",
+                    callback_data="help_callback hb3",
                     style=ButtonStyle.SUCCESS
                 ),
 
@@ -90,14 +90,14 @@ def help_pannel(_, START=None):
                 btn(
                     "sᴇᴇᴋ 🔍",
                     5224681093990478312,
-                    callback_data="help_callback hb10",
+                    callback_data="help_callback hb13",
                     style=ButtonStyle.SUCCESS
                 ),
 
                 btn(
                     "sʜᴜғғʟᴇ 🎼",
                     5219696148788307720,
-                    callback_data="help_callback hb11",
+                    callback_data="help_callback hb12",
                     style=ButtonStyle.SUCCESS
                 ),
             ],
@@ -161,7 +161,7 @@ def help_back_markup(_):
                 btn(
                     "ʙᴀᴄᴋ",
                     5210952531676504517,
-                    callback_data="mbot_cb",
+                    callback_data="settings_back_helper",
                     style=ButtonStyle.DANGER,
                 ),
             ]
