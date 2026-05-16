@@ -366,7 +366,7 @@ class Call(PyTgCalls):
                 await _clear_(chat_id)
                 return await client.leave_group_call(chat_id)
             except:
-                return
+                return await client.leave_group_call(chat_id)
         else:
             queued = check[0]["file"]
             language = await get_lang(chat_id)
@@ -629,7 +629,7 @@ class Call(PyTgCalls):
         @self.five.on_stream_end()
         async def stream_end_handler(client, update: Update):
             if not isinstance(update, StreamAudioEnded):
-                return
+                return await client.leave_group_call(chat_id)
             await self.change_stream(client, update.chat_id)
 
 
