@@ -35,14 +35,14 @@ FORCE_CHANNEL_1 = config.FORCE_CHANNEL_1
 FORCE_CHANNEL_2 = config.FORCE_CHANNEL_2
 
 NEXT_IMG = [
-    "https://graph.org/file/1c82daf46ac2ec57b7827-3a05aa863a378ed34a.jpg",
+    "https://graph.org/file/79e01e59facc9c61ee305-35b8e2f8e78bf91224.jpg",
 
-"https://graph.org/file/2f8e61c55d311070339c8-17b572b5c7c8ad0907.jpg",
+"https://graph.org/file/7afea5512f0f5207b439c-bdc54e4572542e2832.jpg",
 
-"https://graph.org/file/1c82daf46ac2ec57b7827-3a05aa863a378ed34a.jpg",
-    "https://graph.org/file/2f8e61c55d311070339c8-17b572b5c7c8ad0907.jpg",
-    "https://graph.org/file/1c82daf46ac2ec57b7827-3a05aa863a378ed34a.jpg",
-    "https://graph.org/file/35f6ffeeac9c330200742-eecc5ab1977d58e06b.jpg",
+"https://graph.org/file/c7281f60e165ccc7d2acd-8d69a688024876ad0c.jpg",
+    "https://graph.org/file/094be14a648fb77912f65-55f6a87374c56fea2a.jpg",
+    "https://graph.org/file/8d893efdee1e681c20082-f34712c79954ebad7e.jpg",
+    "https://graph.org/file/79e01e59facc9c61ee305-35b8e2f8e78bf91224.jpg",
 ]
 
 STICKER = [
@@ -123,7 +123,7 @@ async def start_pm(client, message: Message, _):
     await asyncio.sleep(1.3)
     await accha.edit("🔊 ᴘʟєᴧꜱє ᴡᴧɪᴛ... ʟєᴛ ᴛʜє ᴠɪʙєꜱ ʙєɢɪη 💫")
     await asyncio.sleep(0.2)
-    await accha.edit("🎶✨ ʀσσʜɪ ϻᴜꜱɪᴄ ꜱᴛᴧʀᴛɪηɢ ✨🎶")
+    await accha.edit("🎶✨ 𝐒ɴᴏᴡʏ ϻᴜꜱɪᴄ ꜱᴛᴧʀᴛɪηɢ ✨🎶")
     await asyncio.sleep(0.2)
     await accha.edit("__.ʜєʟʟσ ʜσω ᴧʀє ʏσᴜ 🩷 .__")
     await asyncio.sleep(0.2)
